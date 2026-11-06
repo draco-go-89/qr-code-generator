@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f6f6f8">
+    <title>QR Studio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Quicksand:wght@600;700;800&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="app">
+
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-mark">⛶</div>
+                QR Code Generator - FREE
+            </div>
+        </header>
+
+        <nav class="navbar">
+            <button class="nav-btn active" data-page="generator">Generator</button>
+            <button class="nav-btn" data-page="about">About</button>
+        </nav>
+
+        <main id="generatorPage" class="layout">
+
+            <section class="panel">
+
+                <h1>Create QR Code</h1>
+                <p class="subtitle">Create and customize your QR poster.</p>
+
+                <div class="section-title">CONTENT TYPE</div>
+
+                <div class="types">
+                    <button class="type active" data-type="website"><span>🌏︎</span>Website</button>
+                    <button class="type" data-type="phone"><span>☎</span>Phone</button>
+                    <button class="type" data-type="notes"><span>✎</span>Notes</button>
+                    <!-- <button class="type" data-type="images"><span>▧</span>Images</button> -->
+                </div>
+
+                <div id="websiteFields" class="field">
+                    <label>Website URL</label>
+                    <input id="website" value="" placeholder="https://example.com">
+                </div>
+
+                <div id="phoneFields" class="field hidden">
+                    <label>Phone Number</label>
+                    <input id="phone" type="tel" placeholder="Enter Phone Number">
+                </div>
+
+                <div id="notesFields" class="field hidden">
+                    <label>Notes / Message</label>
+                    <textarea id="notes" placeholder="Write your message..."></textarea>
+                </div>
+
+                <div id="imagesFields" class="field hidden">
+                    <label>Public Image URLs (Maximum 4)</label>
+
+                    <div id="imageInputs" class="url-list">
+                        <input class="image-url" type="url" placeholder="https://example.com/image1.jpg">
+                    </div>
+
+                    <button class="btn secondary" id="addImage" type="button" style="margin-top:10px">
+                        + Add Image
+                    </button>
+
+                    <p class="hint">QR stores image URLs as text. Images are not uploaded or hosted.</p>
+                </div>
+
+                <div class="section-title">POSTER TEMPLATE</div>
+
+                <div class="template-grid">
+                    <button class="template active" data-template="pink">
+                        <div class="swatch" style="background:#efd3da"></div>
+                        <small>Pink</small>
+                    </button>
+
+                    <button class="template" data-template="dark">
+                        <div class="swatch" style="background:#252633"></div>
+                        <small>Dark</small>
+                    </button>
+
+                    <button class="template" data-template="purple">
+                        <div class="swatch" style="background:#d9c9ff"></div>
+                        <small>Purple</small>
+                    </button>
+
+                    <button class="template" data-template="green">
+                        <div class="swatch" style="background:#dce9d9"></div>
+                        <small>Green</small>
+                    </button>
+                </div>
+
+                <div class="section-title">CUSTOMIZATION</div>
+
+                <div class="field">
+                    <label>Heading Above QR</label>
+                    <input id="heading" maxlength="50" value="Scan me" placeholder="Enter heading text">
+                </div>
+
+                <div class="field">
+                    <label>Caption Below QR</label>
+                    <input id="caption" maxlength="50" value="Thank you!" placeholder="Enter caption text">
+                </div>
+
+                <div class="field">
+                    <label>Upload Logo</label>
+                    <input id="logo" type="file" accept="image/*">
+                    <p class="hint">Please upload an image (JPG, PNG) for your logo.</p>
+                </div>
+
+                <div class="custom-grid">
+                    <div class="field">
+                        <label>Background</label>
+                        <input id="bgColor" type="color" value="#efd3da">
+                    </div>
+
+                    <div class="field">
+                        <label>Text Color</label>
+                        <input id="textColor" type="color" value="#211b1e">
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>QR Size: <span id="sizeValue">164 px</span></label>
+                    <input id="qrSize" type="range" min="120" max="210" value="164">
+                </div>
+
+                <label class="checkline">
+                    <input id="showLogo" type="checkbox" checked>
+                    Show Logo Circle
+                </label>
+
+                <label class="checkline">
+                    <input id="showFooter" type="checkbox" checked>
+                    Show Footer
+                </label>
+
+                <div class="actions">
+                    <button class="btn primary" id="generate" type="button">Generate QR</button>
+                    <button class="btn secondary" id="reset" type="button">Reset</button>
+                </div>
+
+                <div id="status" class="status" role="status"></div>
+
+            </section>
+
+            <!-- LIVE PREVIEW -->
+
+            <section class="panel preview-panel">
+
+                <div class="preview-head">
+                    <!-- <span>Live Preview</span> -->
+                    <span class="live">● LIVE PREVIEW</span>
+                </div>
+
+                <div class="stage">
+
+                    <div class="poster" id="poster">
+
+                        <div class="logo-circle" id="logoCircle">
+                            YOUR<br>LOGO<br>HERE
+                        </div>
+
+                        <div class="poster-heading" id="previewHeading">
+                            Scan me
+                        </div>
+
+                        <div class="poster-subheading" id="previewSubheading">
+                            OPEN WEBSITE
+                        </div>
+
+                        <div class="qr-frame" id="qrFrame">
+                            <div id="qrTarget"></div>
+                        </div>
+
+                        <div class="poster-caption" id="previewCaption">
+                            Thank you!
+                        </div>
+
+                        <div class="poster-footer" id="previewFooter">
+                            SCAN TO OPEN
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <button class="btn primary full" id="download" type="button" style="margin-top:15px">
+                    Download Poster PNG
+                </button>
+
+                <p class="hint">Internet connection is required for QR generation.</p>
+
+            </section>
+
+        </main>
+
+        <!-- ABOUT -->
+
+        <section id="aboutPage" class="panel hidden">
+
+            <div class="about-card">
+                <h2 id="aboutName"></h2>
+                <p id="aboutDescription"></p>
+                <p id="aboutDeveloper"></p>
+                <p id="aboutEmail"></p>
+                <p id="aboutWebsite"></p>
+                <p id="aboutCopyright"></p>
+            </div>
+
+        </section>
+
+    </div>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
