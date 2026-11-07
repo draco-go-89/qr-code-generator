@@ -310,9 +310,10 @@ input[type=file] {
 }
 
 .stage {
-    background: #f1f1f4;
+    /* background: #f1f1f4; */
+    background: none;
     padding: 16px 8px;
-    border-radius: 13px;
+    border-radius: 2px;
     display: flex;
     justify-content: center;
 }
@@ -327,7 +328,7 @@ input[type=file] {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    box-shadow: 0 12px 25px #0002;
+    /* box-shadow: 0 12px 25px #0002; */
     overflow: hidden;
 }
 
@@ -407,9 +408,9 @@ input[type=file] {
 
 .poster-caption {
     font-family: system-ui, -apple-system, sans-serif;
-    font-size: 23px;
-    font-weight: 600;
-    letter-spacing: 1px;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
     overflow-wrap: anywhere;
     margin: 0;
 }

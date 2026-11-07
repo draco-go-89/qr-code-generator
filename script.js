@@ -152,7 +152,7 @@
     function renderQR() {
 
         if (typeof QRCode === "undefined") {
-            throw Error("QR library failed to load. Connect to the internet.");
+            throw Error("QR library failed to load. Connect to the internet Bro.");
         }
 
         const data = getPayload();
@@ -406,7 +406,7 @@
             '<input class="image-url" type="url" placeholder="https://example.com/image1.jpg">';
 
         $("heading").value = "Scan me";
-        $("caption").value = "Thank you!";
+        $("caption").value = "Developer";
 
         $("logo").value = "";
         state.logoData = null;
@@ -421,34 +421,80 @@
         updatePreview();
     });
 
+
     /* =====================================
-       CANVAS HELPERS
+       DOWNLOAD POSTER — EXACT PREVIEW
     ===================================== */
 
-    function roundedRect(ctx, x, y, w, h, r, fill) {
+    $("download").addEventListener("click", async () => {
+        const button = $("download");
 
-        ctx.beginPath();
-        ctx.roundRect(x, y, w, h, r);
+        try {
+            const poster = $("poster");
 
-        ctx.fillStyle = fill;
-        ctx.fill();
-    }
+            // Ensure the latest QR is displayed
+            renderQR();
+            updatePreview();
 
-    function loadImage(src) {
+            if (typeof html2canvas === "undefined") {
+                throw Error("Image export library failed to load. Check your internet connection.");
+            }
 
-        return new Promise((resolve, reject) => {
+            // Wait for fonts and images
+            if (document.fonts?.ready) {
+                await document.fonts.ready;
+            }
 
-            const img = new Image();
+            const images = poster.querySelectorAll("img");
 
-            img.onload = () => resolve(img);
+            await Promise.all(
+                [...images].map(img => {
+                    if (img.complete) return Promise.resolve();
 
-            img.onerror = () => {
-                reject(Error("Could not load an image for the poster."));
-            };
+                    return new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = () => reject(
+                            Error("Could not load an image in the poster.")
+                        );
+                    });
+                })
+            );
 
-            img.src = src;
-        });
-    }
+            // Capture ONLY the poster element.
+            // The stage and its background are not included.
+            const canvas = await html2canvas(poster, {
+                scale: 3,
+                useCORS: true,
+                allowTaint: false,
+                backgroundColor: null,
+                logging: false,
+                imageTimeout: 15000,
+                scrollX: 0,
+                scrollY: 0
+            });
+
+            // Export PNG
+            const link = document.createElement("a");
+
+            link.download = "qr-poster.png";
+            link.href = canvas.toDataURL("image/png");
+
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+
+            $("status").style.color = "#398b5c";
+            $("status").textContent = "Poster downloaded successfully.";
+
+        } catch (error) {
+            $("status").style.color = "#bd4545";
+            $("status").textContent =
+                error.message || "Could not download poster.";
+
+            console.error("Poster download error:", error);
+        }
+    });
+
 
     /* =====================================
        DOWNLOAD POSTER PNG
